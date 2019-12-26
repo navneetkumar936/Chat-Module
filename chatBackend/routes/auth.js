@@ -3,7 +3,9 @@ const router = express.Router();
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const { Users } = require('../models/user');
+const jwt = require('jsonwebtoken');
 const { config } = require('../config/config');
+
 
 router.post('/', async function(req, res){
     if(req.body){
@@ -19,14 +21,14 @@ router.post('/', async function(req, res){
             return res.status(422).send('Incorrect Email or Password');
         }
 
-        const salt = await bcrypt.genSalt(config);
-        const validPassword = await bcrypt.compare(user.password, salt);
+        const validPassword = await bcrypt.compare(req.body.password, user.password);
 
         if(!validPassword){
             return res.status(400).send('Incorrect Email or Password');
         }
 
-        const token = user.generateAuthToken();
+        const token = jwt.sign({_id: user._id}, config);
+
         return res.status(200).send({ token })
         
     }

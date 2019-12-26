@@ -12,7 +12,7 @@ router.post('/register', async function(req, res){
             return res.status(422).send(error.details[0].message);
         }
 
-        let user = Users.findOne({ email : req.body.email });
+        let user = await Users.findOne({ email : req.body.email });
         if(user){
             console.log(user);
             
