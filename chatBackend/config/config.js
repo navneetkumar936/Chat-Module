@@ -1,3 +1,3 @@
 var jwtPrivateKey = 'Secret@123';
 
-module.exports = jwtPrivateKey; 
+exports.key = jwtPrivateKey; 

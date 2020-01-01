@@ -4,8 +4,7 @@ const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const { Users } = require('../models/user');
 const jwt = require('jsonwebtoken');
-const { config } = require('../config/config');
-
+const configModule = require('../config/config');
 
 router.post('/', async function(req, res){
     if(req.body){
@@ -18,22 +17,26 @@ router.post('/', async function(req, res){
         const user = await Users.findOne({ email : req.body.email });
 
         if(!user){
-            return res.status(422).send('Incorrect Email or Password');
+            return res.status(422).send({msg :'Incorrect Email or Password'});
         }
 
         const validPassword = await bcrypt.compare(req.body.password, user.password);
 
         if(!validPassword){
-            return res.status(400).send('Incorrect Email or Password');
+            return res.status(400).send({msg : 'Incorrect Email or Password'});
         }
 
-        const token = jwt.sign({_id: user._id}, config);
+        if(!user.confirmed){
+            return res.status(400).send({msg : 'Email is not verified'})
+        }
+
+        const token = jwt.sign({_id: user._id}, configModule.key);
 
         return res.status(200).send({ token })
         
     }
     else{
-        return res.status(422).send('Enter all data');
+        return res.status(422).send({msg : 'Enter all data'});
     }
 })
 

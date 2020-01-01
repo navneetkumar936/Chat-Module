@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const { Users, validate } = require('../models/user');
-const { config } = require('../config/config');
+var _ = require('lodash');
 
 router.post('/register', async function(req, res){
     if(req.body){
@@ -14,9 +14,7 @@ router.post('/register', async function(req, res){
 
         let user = await Users.findOne({ email : req.body.email });
         if(user){
-            console.log(user);
-            
-            return res.status(400).send('User already exists');
+            return res.status(400).send({msg : 'User already exists'});
         }
 
         user = new Users({
@@ -25,19 +23,19 @@ router.post('/register', async function(req, res){
             contact : req.body.contact
         })
 
-        const salt = await bcrypt.genSalt(config);
+        const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password, salt);
         
         try {
             await user.save();
-            return res.status(200).send(user);
+            return res.status(200).send({user:(_.pick(user, ['email', 'contact'])), msg: 'Verification Mail Sent'});
         }
         catch(ex){
-            return res.status(500).send('Exception Occured');
+            return res.status(500).send({msg : 'Exception Occured'});
         }
     }
     else{
-        return res.status(422).send('Enter all data');
+        return res.status(422).send({msg : 'Enter all data'});
     }
 })
 

@@ -7,6 +7,7 @@ const userSchema =  new mongoose.Schema({
     email : {
         required : true,
         type : String,
+        unique : true,
         validate : /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     },
     password : {
@@ -16,6 +17,10 @@ const userSchema =  new mongoose.Schema({
     contact : {
         required : true,
         type : String
+    },
+    confirmed : {
+        default : false,
+        type : Boolean
     }
 })
 
