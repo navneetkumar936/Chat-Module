@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const { Users, validate } = require('../models/user');
 var _ = require('lodash');
+var nodemailer = require("nodemailer");
 
 router.post('/register', async function(req, res){
     if(req.body){
