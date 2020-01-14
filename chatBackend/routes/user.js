@@ -5,6 +5,7 @@ const { Users, validate } = require('../models/user');
 const Tokens = require('../models/verifyTokens');
 var _ = require('lodash');
 const jwt = require('jsonwebtoken');
+var sendMail = require('../service/sendEmail');
 const configModule = require('../config/config');
 
 router.post('/register', async function (req, res) {
@@ -31,7 +32,7 @@ router.post('/register', async function (req, res) {
 
         try {
             const newUser = await user.save();
-            var token = new Tokens({ _userId : newUser._id, token:jwt.sign({ _id : this._id }, configModule.key) });
+            var token = new Tokens({ _userId : newUser._id, token:jwt.sign({ _id : newUser._id }, configModule.key) });
             token = await token.save()
             let link = "http://" + req.get('host') + "/verify/" + token.token;
             mailOptions = {
@@ -41,15 +42,8 @@ router.post('/register', async function (req, res) {
                 html: "Hello,<br> Please Click on the link to verify your email.<br><a href=" + link + ">Click here to verify</a>"
             }
             console.log(mailOptions);
-            smtpTransport.sendMail(mailOptions, function (error, response) {
-                if (error) {
-                    console.log(error);
-                    res.end("error");
-                } else {
-                    console.log("Message sent: " + response);
-                    return res.status(200).send({ user: (_.pick(user, ['email', 'contact'])), msg: 'Verification Mail Sent' });
-                }
-            })
+            sendMail(mailOptions)
+            return res.status(200).send({ user: (_.pick(user, ['email', 'contact'])), msg: 'Verification Mail Sent' });
         }
         catch (ex) {
             console.log(ex);
@@ -61,5 +55,12 @@ router.post('/register', async function (req, res) {
             return res.status(422).send({ msg: 'Enter all data' });
         }
     })
+
+router.get('/verify/:tokenId', async function (req,res) {
+    console.log('called',req.params.tokenId);
+    let token = await Users.findOne({ email: req.body.email });
+    
+    return res.send({})
+})
 
 module.exports = router;
