@@ -61,8 +61,6 @@ exports.verify = async (req, res) => {
         return res.status(422).send({ msg: 'Token has expired' });
     }
 
-    console.log('token:', jwt.decode(token.token)._id);
-
     let user = await Users.findOne({ _id: jwt.decode(token.token)._id })
 
     if (!user) {
@@ -122,6 +120,66 @@ exports.resendVerify = async (req, res) => {
 }
 
 exports.forgotPassword = async (req, res) => {
+    if(req.body){
+
+        const { error } = resendValidate(req.body);
+
+        if(error){
+            return res.status(422).send(error.details[0].message);
+        }
+
+        const user = await Users.findOne({ email : req.body.email });
+
+        if(!user){
+            return res.status(404).send({ msg : "User does not exist" });
+        }
+
+        var token = new Tokens({ token: jwt.sign({ _id: user._id }, configModule.key) });
+        try{
+            token = await token.save();
+            let link = "http://" + req.get('host') + "/resetPassword/" + token.token;
+            mailOptions = {
+                from: "navneet.jha@mail.vinove.com",
+                to: req.body.email,
+                subject: "Password Reset Mail",
+                html: "Hello,<br> Please Click on the link to verify your email.<br><a href=" + link + ">Click here to verify</a>"
+            }
+            sendMail(mailOptions);
+            return res.status(200).send({ msg : 'Password reset mail sent' });
+        }
+        catch(ex){
+            console.log(ex);
+            return res.status(500).send({ msg : 'Exception Occured' });
+        }
+        
+    }
+}
+
+exports.verifyForgot = async (req, res) => {
+    let token = await Tokens.findOne({ token: req.params.tokenId });
+
+    if (!token) {
+        return res.status(422).send({ msg: 'Token has expired' });
+    }
+
+    let user = await Users.findOne({ _id: jwt.decode(token.token)._id })
+
+    if (!user) {
+        return res.status(404).send({ msg: 'No such user exist' });
+    }
+
+    try {
+        await user.save();
+        await Tokens.deleteOne({ _id: token._id });
+        return res.status(200).send({ msg: 'Token verified successfully' });
+    }
+    catch (ex) {
+        console.log('err', ex);
+        return res.status(500).send({ msg: 'Exception Occured' });
+    }
+}
+
+exports.resetPassword = async (req, res) => {
     if(req.body){
 
         const { error } = resendValidate(req.body);

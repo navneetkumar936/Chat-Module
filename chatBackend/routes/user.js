@@ -10,4 +10,8 @@ router.post('/resendVerify', userController.resendVerify);
 
 router.post('/forgotPassword', userController.forgotPassword);
 
+router.post('/verifyForgot/:tokenId', userController.verifyForgot);
+
+router.post('/resetPassword', userController.resetPassword);
+
 module.exports = router;
