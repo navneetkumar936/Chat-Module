@@ -54,7 +54,7 @@ exports.register = async (req, res) => {
     }
 }
 
-exports.verify = async (req, res) => {
+exports.verifyUser = async (req, res) => {
     let token = await Tokens.findOne({ token: req.params.tokenId });
 
     if (!token) {
@@ -144,7 +144,7 @@ exports.forgotPassword = async (req, res) => {
                 from: "navneet.jha@mail.vinove.com",
                 to: req.body.email,
                 subject: "Password Reset Mail",
-                html: "Hello,<br> Please Click on the link to verify your email.<br><a href=" + link + ">Click here to verify</a>"
+                html: "Hello,<br> Please Click on the link to reset your password.<br><a href=" + link + ">Click here. </a>"
             }
             sendMail(mailOptions);
             return res.status(200).send({ msg : 'Password reset mail sent' });

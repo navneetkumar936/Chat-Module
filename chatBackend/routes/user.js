@@ -4,7 +4,7 @@ var userController = require('../controllers/user');
 
 router.post('/register', userController.register);
 
-router.get('/verify/:tokenId', userController.verify);
+router.get('/verifyUser/:tokenId', userController.verifyUser);
 
 router.post('/resendVerify', userController.resendVerify);
 
