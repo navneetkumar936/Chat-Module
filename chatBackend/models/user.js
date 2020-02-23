@@ -4,6 +4,10 @@ const jwt = require('jsonwebtoken');
 const configModule = require('../config/config');
 
 const userSchema =  new mongoose.Schema({
+    name : {
+        required : true,
+        type : String,
+    },
     email : {
         required : true,
         type : String,
@@ -33,6 +37,7 @@ const Users = mongoose.model('User', userSchema);
 
 function checkValidation(reqBody){
     const schema = Joi.object().keys({
+        name : Joi.string().required(),
         email : Joi.string().email(),
         password : Joi.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
         contact : Joi.string().required().min(10)

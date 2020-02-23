@@ -8,7 +8,7 @@ module.exports = (mailOptions) => {
             console.log(error);
             res.end("error");
         } else {
-            console.log("Message sent: " + response.messageId);
+            // console.log("Message sent: " + response.messageId);
         }
     })
 }

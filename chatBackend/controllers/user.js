@@ -12,7 +12,7 @@ exports.register = async (req, res) => {
         const { error } = validate(req.body);
 
         if (error) {
-            return res.status(422).send(error.details[0].message);
+            return res.status(422).send( {msg : error.details[0].message} );
         }
 
         let user = await Users.findOne({ email: req.body.email });
@@ -20,28 +20,24 @@ exports.register = async (req, res) => {
             return res.status(400).send({ msg: 'User already exists' });
         }
 
-        user = new Users({
-            email: req.body.email,
-            password: req.body.password,
-            contact: req.body.contact
-        })
+        user = new Users(req.body);
 
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password, salt);
 
         try {
             const newUser = await user.save();
-            var token = new Tokens({ token: jwt.sign({ _id: newUser._id }, configModule.key) });
-            token = await token.save()
+            var token = new Tokens({ token: jwt.sign({ _id: newUser._id, exp: Math.floor(Date.now() / 1000) + (60 * 60 * 2) }, configModule.key) });
+            token = await token.save();
             let link = "http://" + req.get('host') + "/verify/" + token.token;
             mailOptions = {
                 from: "navneet.jha@mail.vinove.com",
                 to: req.body.email,
                 subject: "Please confirm your Email account",
-                html: "Hello,<br> Please Click on the link to verify your email.<br><a href=" + link + ">Click here to verify</a>"
+                html: "Hello,<br> Please Click on the link to verify your email.<br><a href=" + link + ">Click here to verify</a><br>Link will expire in 2 hours."
             }
             sendMail(mailOptions)
-            return res.status(200).send({ user: (_.pick(user, ['email', 'contact'])), msg: 'Verification Mail Sent' });
+            return res.status(200).send({ user: (_.pick(user, ['name', 'email', 'contact'])), msg: 'Verification Mail Sent' });
         }
         catch (ex) {
             console.log(ex);
@@ -61,22 +57,32 @@ exports.verifyUser = async (req, res) => {
         return res.status(422).send({ msg: 'Token has expired' });
     }
 
-    let user = await Users.findOne({ _id: jwt.decode(token.token)._id })
-
-    if (!user) {
-        return res.status(404).send({ msg: 'No such user exist' });
-    }
-
-    user.confirmed = true;
     try {
-        await user.save();
+        var userId = jwt.verify(token.token, configModule.key)._id;
+
+        let user = await Users.findOne({ _id: userId })
+
+        if (!user) {
+            return res.status(404).send({ msg: 'No such user exist' });
+        }
+
+        user.confirmed = true;
+        try {
+            await user.save();
+            await Tokens.deleteOne({ _id: token._id });
+            return res.status(200).send({ msg: 'User verified successfully' });
+        }
+        catch (ex) {
+            console.log('err', ex);
+            return res.status(500).send({ msg: 'Exception Occured' });
+        }
+    }
+    catch (err) {
         await Tokens.deleteOne({ _id: token._id });
-        return res.status(200).send({ msg: 'User verified successfully' });
+        return res.status(422).send({ msg: 'Token has expired' });
     }
-    catch (ex) {
-        console.log('err', ex);
-        return res.status(500).send({ msg: 'Exception Occured' });
-    }
+
+
 }
 
 exports.resendVerify = async (req, res) => {
@@ -93,26 +99,26 @@ exports.resendVerify = async (req, res) => {
             return res.status(404).send({ msg: 'User does not exist' });
         }
 
-        if(user.confirmed){
-            return res.status(400).send({ msg : "User is already confirmed" });
+        if (user.confirmed) {
+            return res.status(400).send({ msg: "User is already confirmed" });
         }
 
-        var token = new Tokens({ token: jwt.sign({ _id: user._id }, configModule.key) });
-        try{
+        var token = new Tokens({ token: jwt.sign({ _id: user._id, exp: Math.floor(Date.now() / 1000) + (60 * 60 * 2) }, configModule.key) });
+        try {
             token = await token.save();
             let link = "http://" + req.get('host') + "/verify/" + token.token;
             mailOptions = {
                 from: "navneet.jha@mail.vinove.com",
                 to: req.body.email,
                 subject: "Please confirm your Email account",
-                html: "Hello,<br> Please Click on the link to verify your email.<br><a href=" + link + ">Click here to verify</a>"
+                html: "Hello,<br> Please Click on the link to verify your email.<br><a href=" + link + ">Click here to verify</a><br>Link will expire in 2 hours."
             }
             sendMail(mailOptions);
-            return res.status(200).send({ msg : 'Verification Mail Sent' });
+            return res.status(200).send({ msg: 'Verification Mail Sent' });
         }
-        catch(ex){
+        catch (ex) {
             console.log(ex);
-            return res.status(500).send({ msg : 'Exception Occured' });
+            return res.status(500).send({ msg: 'Exception Occured' });
         }
 
 
@@ -120,38 +126,39 @@ exports.resendVerify = async (req, res) => {
 }
 
 exports.forgotPassword = async (req, res) => {
-    if(req.body){
+    if (req.body) {
 
         const { error } = resendValidate(req.body);
 
-        if(error){
+        if (error) {
             return res.status(422).send(error.details[0].message);
         }
 
-        const user = await Users.findOne({ email : req.body.email });
+        const user = await Users.findOne({ email: req.body.email });
 
-        if(!user){
-            return res.status(404).send({ msg : "User does not exist" });
+        if (!user) {
+            return res.status(404).send({ msg: "User does not exist" });
         }
 
-        var token = new Tokens({ token: jwt.sign({ _id: user._id }, configModule.key) });
-        try{
+        var token = new Tokens({ token: jwt.sign({ _id: user._id, exp: Math.floor(Date.now() / 1000) + (60 * 60 * 2) }, configModule.key) });
+
+        try {
             token = await token.save();
             let link = "http://" + req.get('host') + "/resetPassword/" + token.token;
             mailOptions = {
                 from: "navneet.jha@mail.vinove.com",
                 to: req.body.email,
                 subject: "Password Reset Mail",
-                html: "Hello,<br> Please Click on the link to reset your password.<br><a href=" + link + ">Click here. </a>"
+                html: "Hello,<br> Please Click on the link to reset your password.<br><a href=" + link + ">Click here. </a><br>Link will expire in 2 hours."
             }
             sendMail(mailOptions);
-            return res.status(200).send({ msg : 'Password reset mail sent' });
+            return res.status(200).send({ msg: 'Password reset mail sent' });
         }
-        catch(ex){
+        catch (ex) {
             console.log(ex);
-            return res.status(500).send({ msg : 'Exception Occured' });
+            return res.status(500).send({ msg: 'Exception Occured' });
         }
-        
+
     }
 }
 
@@ -162,62 +169,88 @@ exports.verifyForgot = async (req, res) => {
         return res.status(422).send({ msg: 'Token has expired' });
     }
 
-    let user = await Users.findOne({ _id: jwt.decode(token.token)._id })
-
-    if (!user) {
-        return res.status(404).send({ msg: 'No such user exist' });
-    }
-
     try {
-        await user.save();
-        await Tokens.deleteOne({ _id: token._id });
-        return res.status(200).send({ msg: 'Token verified successfully' });
+        var userId = jwt.verify(token.token, configModule.key)._id;
+
+        let user = await Users.findOne({ _id: userId });
+
+        if (!user) {
+            return res.status(404).send({ msg: 'No such user exist' });
+        }
+
+        try {
+            await user.save();
+            return res.status(200).send({ msg: 'Token verified successfully' });
+        }
+        catch (ex) {
+            console.log('err', ex);
+            return res.status(500).send({ msg: 'Exception Occured' });
+        }
     }
-    catch (ex) {
-        console.log('err', ex);
-        return res.status(500).send({ msg: 'Exception Occured' });
+    catch (err) {
+        await Tokens.deleteOne({ _id: token._id });
+        return res.status(422).send({ msg: 'Token has expired' });
     }
 }
 
 exports.resetPassword = async (req, res) => {
-    if(req.body){
+    if (req.body) {
 
-        const { error } = resendValidate(req.body);
+        const { error } = resetValidate(req.body);
 
-        if(error){
+        if (error) {
             return res.status(422).send(error.details[0].message);
         }
 
-        const user = await Users.findOne({ email : req.body.email });
+        let token = await Tokens.findOne({ token: req.body.token });
 
-        if(!user){
-            return res.status(404).send({ msg : "User does not exist" });
+        if (!token) {
+            return res.status(422).send({ msg: 'Token has expired' });
         }
 
-        var token = new Tokens({ token: jwt.sign({ _id: user._id }, configModule.key) });
-        try{
-            token = await token.save();
-            let link = "http://" + req.get('host') + "/resetPassword/" + token.token;
-            mailOptions = {
-                from: "navneet.jha@mail.vinove.com",
-                to: req.body.email,
-                subject: "Password Reset Mail",
-                html: "Hello,<br> Please Click on the link to verify your email.<br><a href=" + link + ">Click here to verify</a>"
+        try {
+            var userId = jwt.verify(token.token, configModule.key)._id;
+
+            let user = await Users.findOne({ _id: userId });
+
+            if (!user) {
+                return res.status(404).send({ msg: 'No such user exist' });
             }
-            sendMail(mailOptions);
-            return res.status(200).send({ msg : 'Password reset mail sent' });
+
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(req.body.password, salt);
+
+            try {
+                await user.save();
+                await Tokens.deleteOne({ _id: token._id });
+                return res.status(200).send({ msg: 'Password Changed Successfully' });
+            }
+            catch (ex) {
+                console.log('err', ex);
+                return res.status(500).send({ msg: 'Exception Occured' });
+            }
+
         }
-        catch(ex){
-            console.log(ex);
-            return res.status(500).send({ msg : 'Exception Occured' });
+        catch (err) {
+            await Tokens.deleteOne({ _id: token._id });
+            return res.status(422).send({ msg: "Token has expired" });
         }
-        
+
     }
 }
 
 function resendValidate(reqBody) {
     const schema = Joi.object().keys({
         email: Joi.string().email().required()
+    })
+
+    return Joi.validate(reqBody, schema);
+}
+
+function resetValidate(reqBody) {
+    const schema = Joi.object().keys({
+        password: Joi.string().required().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
+        token: Joi.string().required()
     })
 
     return Joi.validate(reqBody, schema);

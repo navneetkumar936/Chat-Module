@@ -1,5 +1,5 @@
 module.exports = {
-    host: "mlsrvr.vinove.com",
+    host: "mail.vinove.com",
     port: 587,
     secure: false,
     requireTLS: true,
