@@ -5,7 +5,7 @@ module.exports = {
     requireTLS: true,
     auth: {
         user: "navneet.jha@mail.vinove.com",
-        pass: "navneet@123"
+        pass: "unetlemi69"
     },
     tls: {
         rejectUnauthorized: false

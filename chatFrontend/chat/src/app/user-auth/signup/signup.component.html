@@ -1,0 +1,47 @@
+<div class="container">
+    <div class="reset-pwd register">
+        <h2>Sign Up</h2>
+        <form [formGroup]="registerForm" *ngIf="!registerSuccess">
+
+            <div class="form-group">
+                <label>Name</label>
+                <input placeholder="Enter Name" class="form-control" formControlName="name">
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input placeholder="Enter email" class="form-control" formControlName="email">
+            </div>
+
+            <div class="form-group">
+                <label>New Password</label>
+                <input placeholder="Enter new password" type="password" class="form-control" formControlName="password">
+            </div>
+
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input placeholder="Confirm password" type="password" class="form-control"
+                    formControlName="confirmPassword">
+            </div>
+
+            <div class="form-group">
+                <label>Contact</label>
+                <input placeholder="Enter phone number" class="form-control" formControlName="contact">
+            </div>
+
+            <div *ngIf="serverError" class="error">
+                {{serverError}}
+            </div>
+
+            <div>
+                <a href="javascript:void(0);" routerLink="/"><u>Click here to login</u></a>
+                <button class="resetBtn primary" type="submit" (click)="submit(registerForm.value)">Submit</button>
+            </div>
+        </form>
+
+        <div *ngIf="registerSuccess">
+            Verification Mail sent to your account.
+            <button class="resetBtn primary" type="submit" routerLink="/">Click here to login</button>
+        </div>
+    </div>
+</div>

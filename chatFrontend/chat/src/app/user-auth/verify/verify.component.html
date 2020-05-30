@@ -1,0 +1,17 @@
+<div class="container">
+    <div class="reset-pwd">
+        <h2>Verify User</h2>
+        <form [formGroup]="resetForm">
+            <div *ngIf="!serverError">
+                Congratulations!!!<br>
+                Email verified successfully
+            </div>
+
+            <div *ngIf="serverError" class="error">
+                {{serverError}}
+            </div>
+
+            <button class="resetBtn primary" type="submit" routerLink="/" >Login</button>
+        </form>
+    </div>
+</div>

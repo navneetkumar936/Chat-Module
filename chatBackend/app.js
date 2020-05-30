@@ -6,10 +6,13 @@ Joi.objectId = require('joi-objectid')(Joi);
 const auth = require('./routes/auth');
 const user = require('./routes/user');
 const chat = require('./routes/chat');
+var cors = require('cors');
 
 mongoose.connect('mongodb://localhost/chat_app', { useNewUrlParser : true, useUnifiedTopology: true, useCreateIndex: true })
     .then(() => { console.log('connected to chat_app');})
     .catch(() => { console.log('error while connecting to db');})
+
+app.use(cors())
 
 app.use(express.json());
 

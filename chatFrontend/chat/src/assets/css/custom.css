@@ -1,0 +1,335 @@
+.container {
+    max-width: 1230px;
+}
+
+.login-container{
+    margin-top: 200px;
+    display: flex;
+    box-shadow: 4px 4px 18px 0px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 4px 4px 18px 0px rgba(0, 0, 0, 0.75)
+}
+
+.logo{
+    text-align: center;
+    margin: 20px;
+}
+
+.logo img{
+    max-width: 170px;
+}
+
+hr{
+    background: #ed7422;
+    height: 1px;
+    width: 80%;
+    text-align: center;
+}
+
+.login-form{
+    padding : 0px 50px;
+}
+
+.form-control{
+    border-radius: 0;
+    background-color: rgba(102,102,102,0.15);
+}
+
+.form-control:focus {
+    border: 2px solid rgb(255,255,255) !important;
+
+    background-color: rgba(102,102,102,0.15);
+}
+
+.login-box{
+    border: 2px solid black;
+    width: 33%;
+}
+
+.banner{
+    width:67%
+}
+
+.banner img{
+    height: 100%;
+    width: 100%;
+}
+
+.resend{
+    padding: 0px 50px;
+}
+
+.forgot-text{
+    float: right;
+}
+
+.notRegistered{
+    padding-top: 10px;
+    text-align: center;
+}
+
+.login-submit{
+    text-align: center;
+    margin: 5%;
+}
+
+.login-submit input{
+    padding: 10px 50px;
+    border-radius: 25px;
+    background-color: #0471b5;
+    color: white;
+    border-width: 0;
+}
+
+header{
+    background-color: #fef4ee;
+    height: auto;
+    padding: 20px 30px 20px 0px;;
+}
+
+.header-logo{
+    height: 35px;
+    padding: 0 20px;
+}
+
+.header-logo img{
+    height: inherit;
+    padding: 0 30px;
+}
+
+.header-icons{
+    float: right;
+}
+
+.header-icons span{
+    padding: 0px 25px;
+}
+
+.header-icons span i{
+    padding: 0px 5px;
+}
+
+.fa-user:hover{
+    transition: all .2s;
+    transform: translateY(-10px);
+}
+
+.fa-sign-out:hover{
+    transition: all .2s;
+    transform: translateX(10px);
+}
+
+.title{
+    text-align: center;
+    font-size: 30px;
+}
+
+.chat-box{
+    display: flex;
+    border: 1px solid #c4c4c4;
+}
+
+.connections{
+    width: 40%;
+    border: 1px solid #c4c4c4;
+    border-width: 0 1px 0 0;
+    background: #f8f8f8;
+}
+
+.msg-dashboard{
+    margin: 10px;
+    width: 60%;
+}
+
+.search{
+    position: relative;
+    float: right;
+}
+
+.connection-header{
+    border: 1px solid #c4c4c4;
+    border-width: 0 0 1px 0;
+    padding: 2%;;
+}
+
+.search input{
+    padding: 0 5px;
+    border-width: 0 0 2px 0;
+    background: #f8f8f8;
+}
+
+.search input:focus{
+    outline: 0;
+}
+
+.search i {
+    position: absolute;
+    right: 10px;
+    color: #7b6b6b;
+    font-size: 20px;
+}
+
+.recent-text{
+    font-size: 20px;
+    color: #18728f;
+}
+
+.messages .users{
+    padding: 3%;
+    border: 1px solid #c4c4c4;
+    border-width: 0 0 1px 0;
+    display: flex;
+    max-height: 650px;
+    overflow-y:auto;
+}
+
+.messages .users img{
+    height: 50px;
+    width: 50px;
+}
+
+.userdate{
+    float: right;
+    font-size: 12px;
+}
+
+.user-image{
+    width: 25%;
+}
+
+.msgData{
+    margin-left: 15px;
+}
+
+.lastmsg{
+    margin-top: 5px;
+    color: grey;
+    font-size: 14px;
+}
+
+.active{
+    background: #ebebeb;
+}
+
+.msg-box{
+    padding: 10px;
+    max-height: 580px;
+    overflow-y: auto;
+}
+
+.sent-msg-container{
+    float: right;
+    padding-top: 30px;
+}
+
+.sent-msg{
+    font-size: 15px;
+    border-radius: 2px;
+    background-color: #18728f;
+    color: white;
+    padding: 3px 10px;
+    max-width: 400px;
+}
+
+.msgDate{
+    color: #747474;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.received-msg-container{
+    clear: both;
+    max-width: 400px;
+    display: flex;
+    padding-top: 30px;
+}
+
+.received-msg{
+    font-size: 15px;
+    border-radius: 2px;
+    background-color: #ebebeb;
+    color: black;
+    padding: 3px 10px;
+    max-width: 400px;
+}
+
+.rxMsgDate{
+    color: #747474;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.received-msg-container img{
+    height: 50px;
+    width: 50px;
+}
+
+.rxMsg{
+    margin-left: 10px;
+}
+
+.reply-box{
+    position: relative;
+}
+
+.reply-box input{
+    border-width: 1px 0 0 0;
+    width: 100%;
+    padding: 10px;
+}
+
+.reply-box input:focus{
+    outline: none;
+}
+
+.reply-box i{
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    border-radius: 18px;
+    border: 4px solid;
+    padding: 7px;
+    color: white;
+    background: #18728f;
+}
+
+.error{
+    color: red;
+    font-size: 14px;
+}
+
+.reset-pwd{
+    margin: 20% 25% 0 25%;
+    padding: 20px;
+    border: 2px solid;
+    background: #ffc1071f;
+    overflow: auto;
+}
+
+.register{
+    margin-top: 10%;
+}
+
+.reset-pwd h2{
+    font-weight: bold;
+}
+
+.reset-pwd input{
+    width: 80%;
+    background: #fff6e1;
+}
+
+.reset-pwd input:focus{
+    background: #fff6e1;;
+}
+
+.resetBtn{
+    padding: 10px 20px;
+    border-radius: 15px;
+    border: none;
+    background: burlywood;
+    float: right;
+}
+
+.resetBtn:focus{
+    outline: none;
+}

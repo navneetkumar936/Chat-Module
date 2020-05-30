@@ -29,7 +29,7 @@ exports.register = async (req, res) => {
             const newUser = await user.save();
             var token = new Tokens({ token: jwt.sign({ _id: newUser._id, exp: Math.floor(Date.now() / 1000) + (60 * 60 * 2) }, configModule.key) });
             token = await token.save();
-            let link = "http://" + req.get('host') + "/verify/" + token.token;
+            let link = req.get('origin') + "/verify/" + token.token;
             mailOptions = {
                 from: "navneet.jha@mail.vinove.com",
                 to: req.body.email,
@@ -106,7 +106,7 @@ exports.resendVerify = async (req, res) => {
         var token = new Tokens({ token: jwt.sign({ _id: user._id, exp: Math.floor(Date.now() / 1000) + (60 * 60 * 2) }, configModule.key) });
         try {
             token = await token.save();
-            let link = "http://" + req.get('host') + "/verify/" + token.token;
+            let link = req.get('origin') + "/verify/" + token.token;
             mailOptions = {
                 from: "navneet.jha@mail.vinove.com",
                 to: req.body.email,
@@ -144,7 +144,7 @@ exports.forgotPassword = async (req, res) => {
 
         try {
             token = await token.save();
-            let link = "http://" + req.get('host') + "/resetPassword/" + token.token;
+            let link = req.get('origin') + "/resetPassword/" + token.token;
             mailOptions = {
                 from: "navneet.jha@mail.vinove.com",
                 to: req.body.email,
@@ -178,14 +178,7 @@ exports.verifyForgot = async (req, res) => {
             return res.status(404).send({ msg: 'No such user exist' });
         }
 
-        try {
-            await user.save();
-            return res.status(200).send({ msg: 'Token verified successfully' });
-        }
-        catch (ex) {
-            console.log('err', ex);
-            return res.status(500).send({ msg: 'Exception Occured' });
-        }
+        return res.status(200).send({ msg: 'Token verified successfully' });
     }
     catch (err) {
         await Tokens.deleteOne({ _id: token._id });
@@ -199,7 +192,7 @@ exports.resetPassword = async (req, res) => {
         const { error } = resetValidate(req.body);
 
         if (error) {
-            return res.status(422).send(error.details[0].message);
+            return res.status(422).send({msg : error.details[0].message});
         }
 
         let token = await Tokens.findOne({ token: req.body.token });
@@ -239,6 +232,10 @@ exports.resetPassword = async (req, res) => {
     }
 }
 
+exports.userProfile = async (req, res) => {
+    
+}
+
 function resendValidate(reqBody) {
     const schema = Joi.object().keys({
         email: Joi.string().email().required()
@@ -250,6 +247,7 @@ function resendValidate(reqBody) {
 function resetValidate(reqBody) {
     const schema = Joi.object().keys({
         password: Joi.string().required().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
+        confirmPassword : Joi.string().required().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/).valid(Joi.ref('password')),
         token: Joi.string().required()
     })
 

@@ -40,6 +40,7 @@ function checkValidation(reqBody){
         name : Joi.string().required(),
         email : Joi.string().email(),
         password : Joi.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
+        confirmPassword : Joi.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/).valid(Joi.ref('password')),
         contact : Joi.string().required().min(10)
     })
 

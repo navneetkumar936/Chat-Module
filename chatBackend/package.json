@@ -19,6 +19,7 @@
   "homepage": "https://github.com/navneetkumar936/Chat-Module#readme",
   "dependencies": {
     "bcrypt": "^3.0.7",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "joi": "^14.3.1",
     "joi-objectid": "^3.0.1",

@@ -9,7 +9,7 @@ exports.login = async(req, res) => {
         const { error } = validate(req.body);
         
         if(error){
-            return res.status(422).send(error.details[0].message);
+            return res.status(422).send({msg : error.details[0].message});
         }
 
         const user = await Users.findOne({ email : req.body.email });

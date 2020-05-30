@@ -14,4 +14,6 @@ router.get('/verifyForgot/:tokenId', userController.verifyForgot);
 
 router.post('/resetPassword', userController.resetPassword);
 
+router.get('/userProfile', userController.userProfile)
+
 module.exports = router;
