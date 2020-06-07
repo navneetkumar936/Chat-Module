@@ -15,6 +15,6 @@ router.get('/verifyForgot/:tokenId', userController.verifyForgot);
 
 router.post('/resetPassword', userController.resetPassword);
 
-router.get('/userProfile', [authorization()], userController.userProfile)
+router.get('/userProfile', [authorization], userController.userProfile)
 
 module.exports = router;

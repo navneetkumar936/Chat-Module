@@ -2,7 +2,7 @@ const configModule = require('../config/config');
 const jwt = require('jsonwebtoken');
 const { Users } = require('../models/user');
 
-module.exports = function () {
+module.exports = (() => {
     return async function  (req, res, next) {
         if (!req.headers['authorization']) {
             return res.status(400).send({ msg: 'Unauthorized User' });
@@ -30,4 +30,4 @@ module.exports = function () {
             }
         }
     }
-}
+})
