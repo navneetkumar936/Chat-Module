@@ -233,7 +233,7 @@ exports.resetPassword = async (req, res) => {
 }
 
 exports.userProfile = async (req, res) => {
-    
+    return res.status(200).send(_.pick(req.user, ['name', 'email', 'contact']));
 }
 
 function resendValidate(reqBody) {

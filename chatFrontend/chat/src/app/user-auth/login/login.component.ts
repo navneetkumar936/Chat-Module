@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataService } from 'src/app/services/data.service';
+import { Router } from '@angular/router';
 declare var $: any;
 
 @Component({
@@ -11,13 +12,13 @@ declare var $: any;
 export class LoginComponent implements OnInit {
 
   public loginForm: FormGroup;
-  loginServerErr="";
+  loginServerErr = "";
   resendMail = '';
-  resendServerErr="";
+  resendServerErr = "";
   forgotMail = '';
-  forgotServerError='';
+  forgotServerError = '';
 
-  constructor(fb: FormBuilder, public ds: DataService) {
+  constructor(fb: FormBuilder, public ds: DataService, public router: Router) {
     this.loginForm = fb.group({
       email: ['', Validators.required],
       password: ['', Validators.required]
@@ -31,7 +32,14 @@ export class LoginComponent implements OnInit {
   submit(value) {
     if (this.loginForm.valid) {
       this.ds.login(value).subscribe((res: any) => {
-        console.log(res);
+        localStorage.setItem('accessToken', res.token);
+        this.ds.userProfile().subscribe((data: any) => {
+          localStorage.setItem('userData', JSON.stringify(data));
+          this.router.navigate(['/dashboard']);
+        },
+          (err: any) => {
+            console.log(err);
+          })
       },
         (err: any) => {
           this.loginServerErr = err.error.msg;

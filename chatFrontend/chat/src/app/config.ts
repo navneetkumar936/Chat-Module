@@ -5,7 +5,9 @@ let urls = {
     resetPwd : 'user/resetPassword',
     verifyUser : 'user/verifyUser',
     verifyPwdToken : 'user/verifyForgot',
-    register : 'user/register'
+    register : 'user/register',
+    userProfile : 'user/userProfile',
+    search : 'chat/search'
 }
 
 export {urls};

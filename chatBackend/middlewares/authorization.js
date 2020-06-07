@@ -19,6 +19,7 @@ module.exports = function () {
                         return res.status(400).send({ msg: 'Unauthorized User' });
                     }
 
+                    req.user = user;
                     next();
                 }
                 catch (err) {

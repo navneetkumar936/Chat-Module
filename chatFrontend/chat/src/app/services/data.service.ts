@@ -36,4 +36,12 @@ export class DataService {
         return this.http.post(`${env.baseUrl}${urls.register}`, payload);
     }
 
+    userProfile(){
+        return this.http.get(`${env.baseUrl}${urls.userProfile}`);
+    }
+
+    searchUser(search){
+        return this.http.get(`${env.baseUrl}${urls.search}?name=${search}`);
+    }
+
 }
