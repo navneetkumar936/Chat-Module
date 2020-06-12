@@ -8,7 +8,7 @@ const user = require('./routes/user');
 const chat = require('./routes/chat');
 var cors = require('cors');
 
-mongoose.connect('mongodb://localhost/chat_app', { useNewUrlParser : true, useUnifiedTopology: true, useCreateIndex: true })
+mongoose.connect('mongodb://localhost/chat_app', { useNewUrlParser : true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false })
     .then(() => { console.log('connected to chat_app');})
     .catch(() => { console.log('error while connecting to db');})
 

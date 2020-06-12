@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { required } = require('joi');
 
 const messageSchema =  new mongoose.Schema({
     chatRoomId : {
@@ -15,11 +16,17 @@ const messageSchema =  new mongoose.Schema({
             },
             sender : {
                 type : mongoose.Schema.Types.ObjectId,
+                ref : 'User',
                 required : true
             },
             msg : {
                 type : String,
                 required : true
+            },
+            seen : {
+                type : Boolean,
+                required : true,
+                default : false
             }
         }
     ]
