@@ -42,7 +42,7 @@ hr{
 
 .login-box{
     border: 2px solid black;
-    width: 33%;
+    width: 100%;
 }
 
 .banner{
@@ -337,6 +337,7 @@ header{
 
 
 .container{max-width:1170px; margin:auto;}
+.login-container{max-width:800px; margin:20% 25% 0 25%;}
 img{ max-width:100%;}
 .inbox_people {
   background: #f8f8f8 none repeat scroll 0 0;

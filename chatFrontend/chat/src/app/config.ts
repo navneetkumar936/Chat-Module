@@ -7,7 +7,7 @@ let urls = {
     verifyPwdToken : 'user/verifyForgot',
     register : 'user/register',
     userProfile : 'user/userProfile',
-    search : 'chat/search'
+    search : 'chat/search',
 }
 
 export {urls};

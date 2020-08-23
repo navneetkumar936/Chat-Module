@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataService } from 'src/app/services/data.service';
 import { Router } from '@angular/router';
+import { SharedService } from 'src/app/services/shared.service';
+import { ChatService } from 'src/app/services/chat.service';
 declare var $: any;
 
 @Component({
@@ -18,7 +20,7 @@ export class LoginComponent implements OnInit {
   forgotMail = '';
   forgotServerError = '';
 
-  constructor(fb: FormBuilder, public ds: DataService, public router: Router) {
+  constructor(fb: FormBuilder, public ds: DataService, public router: Router, public chatService : ChatService) {
     this.loginForm = fb.group({
       email: ['', Validators.required],
       password: ['', Validators.required]
@@ -35,6 +37,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('accessToken', res.token);
         this.ds.userProfile().subscribe((data: any) => {
           localStorage.setItem('userData', JSON.stringify(data));
+          this.chatService.connectSocket();
           this.router.navigate(['/dashboard']);
         },
           (err: any) => {

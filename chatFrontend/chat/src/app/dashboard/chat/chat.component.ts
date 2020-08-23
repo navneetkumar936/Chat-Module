@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
+import { ChatService } from 'src/app/services/chat.service';
 
 @Component({
   selector: 'app-chat',
@@ -14,7 +15,7 @@ export class ChatComponent implements OnInit {
   public setTimeId : any;
   public searchArr : any;
 
-  constructor( public ds : DataService, private renderer: Renderer2 ) { }
+  constructor( public ds : DataService, private renderer: Renderer2, public cS : ChatService ) { }
 
   ngOnInit() {
     this.renderer.listen('window', 'click', (e: Event) => {

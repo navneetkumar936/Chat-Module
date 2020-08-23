@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { InterceptorService } from './services/interceptor.service';
+import { ChatService } from './services/chat.service';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,6 @@ import { InterceptorService } from './services/interceptor.service';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: InterceptorService, multi: true }
-
   ],
   bootstrap: [AppComponent]
 })

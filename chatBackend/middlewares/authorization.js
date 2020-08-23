@@ -5,7 +5,7 @@ const { Users } = require('../models/user');
 module.exports = (() => {
     return async function  (req, res, next) {
         if (!req.headers['authorization']) {
-            return res.status(400).send({ msg: 'Unauthorized User' });
+            return res.status(401).send({ msg: 'Unauthorized User' });
         } else {
             if (req.headers['authorization'].startsWith('Bearer ')) {
                 let token = req.headers['authorization'];
@@ -16,17 +16,17 @@ module.exports = (() => {
                     let user = await Users.findOne({ _id: userId });
 
                     if (!user) {
-                        return res.status(400).send({ msg: 'Unauthorized User' });
+                        return res.status(401).send({ msg: 'Unauthorized User' });
                     }
 
                     req.user = user;
                     next();
                 }
                 catch (err) {
-                    return res.status(400).send({ msg: 'Unauthorized User' });
+                    return res.status(401).send({ msg: 'Unauthorized User' });
                 }
             } else {
-                return res.status(400).send({ msg: 'Unauthorized User' });
+                return res.status(401).send({ msg: 'Unauthorized User' });
             }
         }
     }

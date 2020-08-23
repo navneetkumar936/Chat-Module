@@ -10,9 +10,9 @@ const messageSchema =  new mongoose.Schema({
     messages : [
         {
             createdAt : {
-                type : Date,
+                type : Number,
                 required : true,
-                default : Date.now()
+                default : Number(new Date())
             },
             sender : {
                 type : mongoose.Schema.Types.ObjectId,
