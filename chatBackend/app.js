@@ -14,8 +14,10 @@ var cors = require('cors');
 
 io.set("origins", "*:*");
 
+global.testIO = io
+
 // exporting the socket file to be used in other routes
-require('./service/chatRoom')(io);
+require('./service/chatRoom').socketService(io);
 
 mongoose.connect('mongodb://localhost/chat_app', { useNewUrlParser : true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false })
     .then(() => { console.log('connected to chat_app');})

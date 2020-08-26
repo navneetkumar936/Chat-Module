@@ -6,5 +6,6 @@ var chatController = require('../controllers/chat');
 router.get('/search', [authorization()], chatController.search);
 router.post('/newMessage', [authorization()], chatController.newMessage);
 router.get('/message/:receiverId', [authorization()], chatController.getMessage);
+router.get('/connectedUsers', [authorization()], chatController.connectedUsers);
 
 module.exports = router;
