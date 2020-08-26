@@ -16,7 +16,6 @@ module.exports.socketService = function (io) {
                         delete connectedUsers[data];
                     }
                     connectedUsers[userId] = socket.id;
-                    console.log('socketArr:', connectedUsers);
                 }
             }
             catch(ex){
@@ -26,7 +25,7 @@ module.exports.socketService = function (io) {
         })
 
         var srvSockets = io.sockets.sockets;
-        console.log('count:', Object.keys(srvSockets).length);
+        // console.log('count:', Object.keys(srvSockets).length);
         // socket.on()
         socket.on('disconnect', () => {
             console.log('disonnected');
@@ -37,8 +36,8 @@ module.exports.socketService = function (io) {
             }
             var newsrvSockets = io.sockets.sockets;
 
-            console.log('count:', Object.keys(newsrvSockets).length);
-            console.log('socketArr:', connectedUsers);
+            // console.log('count:', Object.keys(newsrvSockets).length);
+            // console.log('socketArr:', connectedUsers);
         })
     })
 }

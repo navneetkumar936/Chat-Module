@@ -21,71 +21,79 @@ exports.search = async (req, res) => {
     return res.status(200).send({ data: (_.map(usersRecord, o => _.pick(o, ['name', 'email', 'contact', '_id']))) });
 }
 
-exports.newMessage = async (req, res) => {
-    if (req.body) {
+exports.newMessage = function(io){
+    var that = {};
 
-        const { error } = checkNewMsg(req.body);
+    const _io = io;
 
-        if (error) {
-            return res.status(422).send({ msg: error.details[0].message })
-        }
-
-        try {
-
-            if (req.body.receiver == req.user._id) {
-                return res.status(400).send({ msg: "Sender and receiver cannot be same" });
-            }
-
-            let receiverUser = await Users.findById(req.body.receiver);
-            let convRoom = {};
-            const loggedInUserChats = await ChatRooms.find({ $or: [{ user1: req.user._id }, { user2: req.user._id }] });
-
-            if (loggedInUserChats.length) {
-                loggedInUserChats.forEach((ele) => {
-                    if ((ele.user1 == req.body.receiver) || (ele.user2 == req.body.receiver)) {
-                        convRoom = ele;
-                    }
-                })
-            }
-
-            if (Object.keys(convRoom).length === 0 && convRoom.constructor === Object) {
-                convRoom = new ChatRooms({ user1: req.user._id, user2: receiverUser });
-                convRoom = await convRoom.save();
-                let msg = {
-                    chatRoomId: convRoom._id,
-                    messages: [
-                        {
-                            sender: req.user._id,
-                            msg: cryptr.encrypt(req.body.msg)
-                        }
-                    ]
-                }
-                newMsg = new Messages(msg);
-                await newMsg.save();
-            }
-            else {
-                let msg = {
-                    sender: req.user._id,
-                    msg: cryptr.encrypt(req.body.msg)
-                }
-                let newMsg = await Messages.findOneAndUpdate({ chatRoomId: convRoom._id }, { $push: { messages: msg } }, { new: true });
-            }
-            if(chatService.connectedUsers[req.body.receiver]){
-                console.log(chatService.connectedUsers[req.body.receiver]);
-                global.testIO.to(chatService.connectedUsers[req.body.receiver]).emit('msg', { hello: req.body.msg });
-            }
-
-
-            return res.status(200).send({ msg: 'Message saved successfully' });
-        }
-        catch (ex) {
-            return res.status(400).send({ "msg": "User not found" });
-        }
-
+    that.saveMsg = async (req, res) => {
+       if (req.body) {
+    
+           const { error } = checkNewMsg(req.body);
+    
+           if (error) {
+               return res.status(422).send({ msg: error.details[0].message })
+           }
+    
+           try {
+    
+               if (req.body.receiver == req.user._id) {
+                   return res.status(400).send({ msg: "Sender and receiver cannot be same" });
+               }
+    
+               let receiverUser = await Users.findById(req.body.receiver);
+               let convRoom = {};
+               const loggedInUserChats = await ChatRooms.find({ $or: [{ user1: req.user._id }, { user2: req.user._id }] });
+    
+               if (loggedInUserChats.length) {
+                   loggedInUserChats.forEach((ele) => {
+                       if ((ele.user1 == req.body.receiver) || (ele.user2 == req.body.receiver)) {
+                           convRoom = ele;
+                       }
+                   })
+               }
+    
+               if (Object.keys(convRoom).length === 0 && convRoom.constructor === Object) {
+                   convRoom = new ChatRooms({ user1: req.user._id, user2: receiverUser });
+                   convRoom = await convRoom.save();
+                   let msg = {
+                       chatRoomId: convRoom._id,
+                       messages: [
+                           {
+                               sender: req.user._id,
+                               msg: cryptr.encrypt(req.body.msg)
+                           }
+                       ]
+                   }
+                   newMsg = new Messages(msg);
+                   await newMsg.save();
+               }
+               else {
+                   let msg = {
+                       sender: req.user._id,
+                       msg: cryptr.encrypt(req.body.msg)
+                   }
+                   let newMsg = await Messages.findOneAndUpdate({ chatRoomId: convRoom._id }, { $push: { messages: msg } }, { new: true });
+                   console.log(newMsg);
+               }
+               if(chatService.connectedUsers[req.body.receiver]){
+                   _io.to(chatService.connectedUsers[req.body.receiver]).emit('msg', { data: req.body.msg });
+               }
+    
+    
+               return res.status(200).send({ msg: 'Message saved successfully' });
+           }
+           catch (ex) {
+               return res.status(400).send({ "msg": "User not found" });
+           }
+    
+       }
+       else {
+           return res.status(422).send({ msg: 'Enter all data' });
+       }
     }
-    else {
-        return res.status(422).send({ msg: 'Enter all data' });
-    }
+
+    return that;
 }
 
 exports.getMessage = async (req, res) => {

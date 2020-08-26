@@ -8,15 +8,15 @@ const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const auth = require('./routes/auth');
 const user = require('./routes/user');
-const chat = require('./routes/chat');
+const chat = require('./routes/chat').router;
 
 var cors = require('cors');
 
 io.set("origins", "*:*");
 
-global.testIO = io
-
 // exporting the socket file to be used in other routes
+require('./routes/chat').chatService(io);
+
 require('./service/chatRoom').socketService(io);
 
 mongoose.connect('mongodb://localhost/chat_app', { useNewUrlParser : true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false })
